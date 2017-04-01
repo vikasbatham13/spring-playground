@@ -1,8 +1,10 @@
 package com.example;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +56,28 @@ public class Controller {
     public String getVolume(@PathVariable String a,@PathVariable String b,@PathVariable String c) {
         int result = (Integer.parseInt(a))* (Integer.parseInt(b)) * (Integer.parseInt(c));
         return String.format("The volume of a %s x %s x %s rectangle is %d", a, b,c,result);
+    }
+
+
+    @PostMapping(value = "/area" ,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE )
+    public String calculateArea(@RequestParam Map<String,String> querystring) {
+        String type = querystring.get("type");
+
+        if (type.equalsIgnoreCase("circle")){
+           String radius = querystring.get("radius");
+           if(radius!=null && radius!=""){
+               double area = Math.PI *Double.parseDouble(radius) * Double.parseDouble(radius);
+               return String.format("Area of a circle with a radius of %s is %e", radius, area);
+           }else return "Invalid";
+        }else if(type.equalsIgnoreCase("rectangle")){
+            String width = querystring.get("width");
+            String height = querystring.get("height");
+            if(width!=null && width!="" && height!=null && height!="" ){
+                int area = Integer.parseInt(width) * Integer.parseInt(height);
+                return String.format("Area of a %sx%s rectangle is %d", width,height,area);
+            }else return "Invalid";
+        }else
+            return "Invalid";
     }
 
 }
