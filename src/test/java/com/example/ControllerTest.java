@@ -1,6 +1,5 @@
 package com.example;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,13 @@ public class ControllerTest {
         this.mockMvc.perform(post("/math/sum?n=4&n=5&n=6"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("15"));
+    }
+
+    @Test
+    public void VolumeTest() throws Exception{
+        this.mockMvc.perform(get ("/math/volume/3/4/6"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The volume of a 3 x 4 x 6 rectangle is 72"));
     }
 
 }

@@ -3,13 +3,9 @@ package com.example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
-import com.example.MathService;
 
 @RestController
 @RequestMapping("/math")
@@ -53,4 +49,11 @@ public class Controller {
 
         return Integer.toString(sum);
     }
+
+    @RequestMapping(value = "/volume/{a}/{b}/{c}", method = {RequestMethod.POST, RequestMethod.GET,RequestMethod.PATCH,RequestMethod.PUT,RequestMethod.DELETE})
+    public String getVolume(@PathVariable String a,@PathVariable String b,@PathVariable String c) {
+        int result = (Integer.parseInt(a))* (Integer.parseInt(b)) * (Integer.parseInt(c));
+        return String.format("The volume of a %s x %s x %s rectangle is %d", a, b,c,result);
+    }
+
 }
