@@ -1,83 +1,157 @@
 package com.example;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @RestController
-@RequestMapping("/math")
+@RequestMapping("/flights")
 public class Controller {
 
 
-    @Autowired
-    private MathService service;
+    @GetMapping("/flight")
+    public Flights getFlight() {
 
-    @GetMapping("/pi")
-    public String getPi() {
-        return Double.toString( Math.PI);
+        Person person = new Person();
+        person.setFirstName("Some name");
+        person.setLastName("Some other name");
+        PersonTicket personTicket = new PersonTicket();
+        personTicket.setPassenger(person);
+        personTicket.setPrice(200);
+        Flights flight = new Flights();
+        try {
+            flight.setDeparts(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2017-04-21 08:34"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PersonTicket> list = new ArrayList<>();
+        list.add(personTicket);
+        flight.setTickets(list);
+        return flight;
     }
 
-    @GetMapping("/calculate")
-    public String calculateNumbers(@RequestParam Map<String,String> querystring) {
-        String operation = null;
-        int response = 0;
-        if (querystring.get("operation") != null)
-            operation = (String) querystring.get("operation");
-        else operation = "add";
-        int var1 = Integer.parseInt(querystring.get("x"));
-        int  var2 = Integer.parseInt(querystring.get("y"));
-        response = service.calculation(var1,var2,operation);
-        return Integer.toString(response);
+    @GetMapping
+    public List<Flights> getFlightList() {
+
+        Person person = new Person();
+        Person person1 = new Person();
+
+        person.setFirstName("Some name");
+        person.setLastName("Some other name");
+        PersonTicket personTicket = new PersonTicket();
+        personTicket.setPassenger(person);
+        personTicket.setPrice(200);
+        Flights flight = new Flights();
+        try {
+            flight.setDeparts(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2017-04-21 08:34"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PersonTicket> list = new ArrayList<>();
+        list.add(personTicket);
+        flight.setTickets(list);
+
+        person1.setFirstName("Some other name");
+        person1.setLastName(null);
+        PersonTicket personTicket1 = new PersonTicket();
+        personTicket1.setPassenger(person1);
+        personTicket1.setPrice(400);
+        Flights flight1 = new Flights();
+        try {
+
+            flight1.setDeparts(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2017-04-21 08:34"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<PersonTicket> list1 = new ArrayList<>();
+        list1.add(personTicket1);
+        flight1.setTickets(list1);
+
+        return Arrays.asList(flight, flight1);
     }
 
-    @PostMapping("/sum")
-    public String sumNumbers(@RequestParam MultiValueMap querystring) {
+    public static class Flights {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        private Date departs;
+        private List<PersonTicket> tickets;
 
-        String response;
-        int sum = 0;
-        Set<String> keys = querystring.keySet();
-        for (String key : keys) {
-            List list = (List) querystring.get(key);
-            for(Object temp : list){
-                int val2 =Integer.valueOf((String)temp);
-                sum = service.calculation(sum,val2,"add");
-            }
+        public List<PersonTicket> getTickets() {
+            return tickets;
         }
 
-        return Integer.toString(sum);
+        @JsonProperty("Tickets")
+        public void setTickets(List<PersonTicket> tickets) {
+            this.tickets = tickets;
+        }
+
+        public Date getDeparts() {
+            return departs;
+        }
+
+        @JsonProperty("Departs")
+        public void setDeparts(Date departs) {
+            this.departs = departs;
+        }
+
     }
 
-    @RequestMapping(value = "/volume/{a}/{b}/{c}", method = {RequestMethod.POST, RequestMethod.GET,RequestMethod.PATCH,RequestMethod.PUT,RequestMethod.DELETE})
-    public String getVolume(@PathVariable String a,@PathVariable String b,@PathVariable String c) {
-        int result = (Integer.parseInt(a))* (Integer.parseInt(b)) * (Integer.parseInt(c));
-        return String.format("The volume of a %s x %s x %s rectangle is %d", a, b,c,result);
+    public static class PersonTicket {
+        private Person passenger;
+        private int price;
+
+        public int getPrice() {
+            return price;
+        }
+
+        @JsonProperty("Price")
+        public void setPrice(int price) {
+            this.price = price;
+        }
+
+        public Person getPassenger() {
+            return passenger;
+        }
+
+        @JsonProperty("Passenger")
+        public void setPassenger(Person passenger) {
+            this.passenger = passenger;
+        }
+
     }
 
+    public static class Person {
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String firstName;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String lastName;
 
-    @PostMapping(value = "/area" ,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE )
-    public String calculateArea(@RequestParam Map<String,String> querystring) {
-        String type = querystring.get("type");
+        public String getLastName() {
+            return lastName;
+        }
 
-        if (type.equalsIgnoreCase("circle")){
-           String radius = querystring.get("radius");
-           if(radius!=null && radius!=""){
-               double area = Math.PI *Double.parseDouble(radius) * Double.parseDouble(radius);
-               return String.format("Area of a circle with a radius of %s is %e", radius, area);
-           }else return "Invalid";
-        }else if(type.equalsIgnoreCase("rectangle")){
-            String width = querystring.get("width");
-            String height = querystring.get("height");
-            if(width!=null && width!="" && height!=null && height!="" ){
-                int area = Integer.parseInt(width) * Integer.parseInt(height);
-                return String.format("Area of a %sx%s rectangle is %d", width,height,area);
-            }else return "Invalid";
-        }else
-            return "Invalid";
+        @JsonProperty("LastName")
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        @JsonProperty("FirstName")
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
     }
+
 
 }
