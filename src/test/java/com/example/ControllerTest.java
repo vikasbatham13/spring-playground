@@ -7,11 +7,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(Controller.class)
@@ -24,13 +28,9 @@ public class ControllerTest {
     public void testFlight() throws Exception {
         this.mockMvc.perform(
                 get("/flights/flight")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.Departs", is("2017-04-21 14:34")))
-                .andExpect(jsonPath("$.Tickets[0].Price", is(200)))
-                .andExpect(jsonPath("$.Tickets[0].Passenger.FirstName", is("Some name")))
-                .andExpect(jsonPath("$.Tickets[0].Passenger.LastName", is("Some other name")));
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -39,13 +39,33 @@ public class ControllerTest {
                 get("/flights")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0]Departs", is("2017-04-21 14:34")))
-                .andExpect(jsonPath("$.[0]Tickets[0].Price", is(200)))
-                .andExpect(jsonPath("$.[0]Tickets[0].Passenger.FirstName", is("Some name")))
-                .andExpect(jsonPath("$.[0]Tickets[0].Passenger.LastName", is("Some other name")))
-                .andExpect(jsonPath("$.[1]Departs", is("2017-04-21 14:34")))
-                .andExpect(jsonPath("$.[1]Tickets[0].Price", is(400)))
-                .andExpect(jsonPath("$.[1]Tickets[0].Passenger.FirstName", is("Some other name")));
+                .andExpect(status().isOk());
     }
+
+    @Test
+    public void testTotalAmount_JsonString() throws Exception {
+        MockHttpServletRequestBuilder request = post("/flights/tickets/total")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content("{\"tickets\": [{\"passenger\": {\"firstName\": \"Some name\",\"lastName\": \"Some other name\"},\"price\": 300}," +
+                        "{ \"passenger\": { \"firstName\": \"Name B\", \"lastName\": \"Name C\" }, \"price\": 150} ]}");
+
+        this.mockMvc.perform(request).
+                andExpect(status().isOk())
+                .andExpect(content().string("{\"result\":450}"));
+    }
+
+    @Test
+    public void testTotalAmount_file() throws Exception {
+
+        String json = new String(Files.readAllBytes(Paths.get("E:\\Galvanize\\spring-playground\\src\\test\\resources\\data.json")));
+        MockHttpServletRequestBuilder request = post("/flights/tickets/total")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(json);
+        ;
+
+        this.mockMvc.perform(request).
+                andExpect(status().isOk())
+                .andExpect(content().string("{\"result\":450}"));
+    }
+
 }

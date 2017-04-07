@@ -1,11 +1,9 @@
 package com.example;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +37,8 @@ public class Controller {
         return flight;
     }
 
-    @GetMapping
+
+    @GetMapping("")
     public List<Flights> getFlightList() {
 
         Person person = new Person();
@@ -79,6 +78,19 @@ public class Controller {
         return Arrays.asList(flight, flight1);
     }
 
+    @PostMapping(value = "/tickets/total", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TicketAmount postFlight(@RequestBody TestTickets testTickets) {
+        PersonTicket[] tickets = testTickets.getTickets();
+        int sum = 0;
+        for (PersonTicket tix : tickets) {
+            int price = tix.getPrice();
+            sum = sum + price;
+        }
+        TicketAmount amount = new TicketAmount();
+        amount.setResult(sum);
+        return amount;
+    }
+
     public static class Flights {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private Date departs;
@@ -88,7 +100,6 @@ public class Controller {
             return tickets;
         }
 
-        @JsonProperty("Tickets")
         public void setTickets(List<PersonTicket> tickets) {
             this.tickets = tickets;
         }
@@ -97,11 +108,9 @@ public class Controller {
             return departs;
         }
 
-        @JsonProperty("Departs")
         public void setDeparts(Date departs) {
             this.departs = departs;
         }
-
     }
 
     public static class PersonTicket {
@@ -112,7 +121,6 @@ public class Controller {
             return price;
         }
 
-        @JsonProperty("Price")
         public void setPrice(int price) {
             this.price = price;
         }
@@ -121,24 +129,20 @@ public class Controller {
             return passenger;
         }
 
-        @JsonProperty("Passenger")
         public void setPassenger(Person passenger) {
             this.passenger = passenger;
         }
-
     }
 
     public static class Person {
-        @JsonInclude(JsonInclude.Include.NON_NULL)
+
         private String firstName;
-        @JsonInclude(JsonInclude.Include.NON_NULL)
         private String lastName;
 
         public String getLastName() {
             return lastName;
         }
 
-        @JsonProperty("LastName")
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
@@ -147,11 +151,37 @@ public class Controller {
             return firstName;
         }
 
-        @JsonProperty("FirstName")
         public void setFirstName(String firstName) {
             this.firstName = firstName;
         }
     }
 
+    //// FOr Sum
+    public static class TestTickets {
+        private PersonTicket[] tickets;
+
+        public PersonTicket[] getTickets() {
+            return tickets;
+        }
+
+        public void setTickets(PersonTicket[] tickets) {
+            this.tickets = tickets;
+        }
+    }
+
+
+    public static class TicketAmount {
+        private int result;
+
+        public int getResult() {
+            return result;
+        }
+
+        public void setResult(int result) {
+            this.result = result;
+        }
+
+
+    }
 
 }
