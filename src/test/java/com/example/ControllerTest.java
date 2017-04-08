@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -57,7 +58,7 @@ public class ControllerTest {
     @Test
     public void testTotalAmount_file() throws Exception {
 
-        String json = new String(Files.readAllBytes(Paths.get("E:\\Galvanize\\spring-playground\\src\\test\\resources\\data.json")));
+        String json = getJSON("/data.json");
         MockHttpServletRequestBuilder request = post("/flights/tickets/total")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(json);
@@ -66,6 +67,13 @@ public class ControllerTest {
         this.mockMvc.perform(request).
                 andExpect(status().isOk())
                 .andExpect(content().string("{\"result\":450}"));
+    }
+
+    private String getJSON(String path) throws Exception {
+        URL url = this.getClass().getResource(path);
+
+        return new String(Files.readAllBytes(Paths.get(url.toURI())));
+
     }
 
 }
