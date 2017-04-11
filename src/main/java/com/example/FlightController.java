@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/flights")
-public class Controller {
+public class FlightController {
 
 
     @GetMapping("/flight")

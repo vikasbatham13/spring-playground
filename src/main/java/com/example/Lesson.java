@@ -1,4 +1,6 @@
-package com.example.model;
+package com.example;
+
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
