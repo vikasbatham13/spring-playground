@@ -1,7 +1,6 @@
 package com.example;
 
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -50,15 +51,15 @@ public class LessonControllerTest {
     public void testPatchLesson() throws Exception {
         Lesson    lessson1 = new Lesson();
         lessson1.setTitle("One");
-        Lesson   lessson2 = new Lesson();
+        Lesson lessson2 = new Lesson();
         lessson2.setTitle("two");
-        Lesson  lessson3 = new Lesson();
+        Lesson lessson3 = new Lesson();
         lessson3.setTitle("three");
-        Lesson  lessson4 = new Lesson();
+        Lesson lessson4 = new Lesson();
         lessson4.setTitle("four");
-        Lesson   lessson5 = new Lesson();
+        Lesson lessson5 = new Lesson();
         lessson5.setTitle("five");
-        Lesson  lessson6 = new Lesson();
+        Lesson lessson6 = new Lesson();
         lessson6.setTitle("Six");
         this.entityManagerFactory.save(Arrays.asList(lessson1, lessson2, lessson3, lessson4, lessson5, lessson6));
 
