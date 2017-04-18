@@ -20,16 +20,16 @@ public class WordCounter {
     public Map<String, Integer> count(String stringToCountWord){
         System.out.println("----------------------------> old String is: -> "+stringToCountWord);
         stringToCountWord = stringToCountWord.replaceAll(",","");
- /*
+
         if (!wordCount.getCaseSensitive()){
             stringToCountWord = stringToCountWord.toLowerCase();
             for (String skip : wordCount.getWords().getSkip()){
                 stringToCountWord = stringToCountWord.replaceAll(skip,"");
             }
         }
-        stringToCountWord =stringToCountWord.replaceAll("  "," ").trim();
+        stringToCountWord = stringToCountWord.replaceAll("  "," ").trim();
         System.out.println("----------------------------> new String is : ->  "+stringToCountWord);
-       */
+
         ArrayList<String> stringList = new ArrayList(Arrays.asList(stringToCountWord.split(" ")));
         Map<String, Integer> counts = stringList.parallelStream().
                 collect(Collectors.toConcurrentMap(
