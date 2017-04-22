@@ -33,6 +33,6 @@ public class ConfigFileUsingPropertySourceTest {
         attributeList.add("an");
         attributeList.add("a");
         Assert.assertThat(wordCount.getWords().getSkip(), Matchers.equalTo(attributeList));
-        
+
     }
 }
