@@ -1,5 +1,6 @@
 package com.example.processor;
 
+import com.example.config.MovieConfig;
 import com.example.rest.model.FinalResponse;
 import com.example.rest.model.Internal;
 import com.example.rest.model.OMDBResponse;
@@ -15,10 +16,18 @@ import java.util.List;
 @Service
 public class MovieProcessor {
     private final RestTemplate restTemplate = new RestTemplate();
+    private final MovieConfig config;
+
+    public MovieProcessor(MovieConfig config) {
+        this.config = config;
+    }
+    public RestTemplate getRestTemplate(){
+        return this.restTemplate;
+    }
 
     public List<FinalResponse> getMovie(String key) throws IOException {
         List<FinalResponse> finalResponse = new ArrayList<FinalResponse>();
-        String response = this.restTemplate.getForObject("http://www.omdbapi.com/?s={s}", String.class, key);
+        String response = this.restTemplate.getForObject(config.getUrl()+"?s={s}", String.class, key);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         OMDBResponse omdbResponse = mapper.readValue(response, OMDBResponse.class);
