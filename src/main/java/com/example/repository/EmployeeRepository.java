@@ -8,4 +8,5 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface EmployeeRepository extends CrudRepository <Employee,Long>{
+    Employee findByUsername(String username);
 }

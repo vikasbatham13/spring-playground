@@ -5,6 +5,7 @@ import com.example.repository.EmployeeRepository;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,11 @@ public class EmployeesController {
     @GetMapping(value = "/admin/employees", produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<Employee> getEmployeeDetail() throws IOException {
         return this.employeeRepository.findAll();
+    }
+
+    @GetMapping("/me")
+    public Employee getMe(@AuthenticationPrincipal Employee employee) {
+        return employee;
     }
 
 }
