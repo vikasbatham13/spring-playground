@@ -12,19 +12,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.httpBasic();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().mvcMatchers("/flights/**", "/math/**","/lessons/**","/words/**").permitAll();
-        http.authorizeRequests().anyRequest().authenticated();
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf().disable();
+        httpSecurity.httpBasic();
+        httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        httpSecurity.authorizeRequests().mvcMatchers("/flights/**", "/math/**","/lessons/**","/words/**").permitAll();
+        httpSecurity.authorizeRequests().mvcMatchers("/admin/**").hasRole("ADMIN");
+        httpSecurity.authorizeRequests().anyRequest().authenticated();
     }
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("employee").password("my-employee-password").roles("EMPLOYEE")
-                .and()
-                .withUser("boss").password("my-boss-password").roles("MANAGER");
+    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.inMemoryAuthentication().withUser("employee").password("my-employee-password").roles("EMPLOYEE");
+        authenticationManagerBuilder.inMemoryAuthentication().withUser("boss").password("my-boss-password").roles("MANAGER","ADMIN");
+        authenticationManagerBuilder.inMemoryAuthentication().withUser("Vikas").password("test").roles("MANAGER");
+        authenticationManagerBuilder.inMemoryAuthentication().withUser("Batham").password("test").roles("ADMIN");
     }
 }
